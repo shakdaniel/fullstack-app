@@ -1,4 +1,5 @@
 import Resolutions from "./resolutions";
+import Goals from "../goals/goals"
 
 // Resolutions.insert({
 //   name: "Test Res"
@@ -9,13 +10,24 @@ import Resolutions from "./resolutions";
 
 export default {
   Query: {
-    resolutions() {
-      return Resolutions.find({}).fetch();
-    } 
+    resolutions(obj, args, { userId = null }) {
+      return Resolutions.find({
+        userId
+      }).fetch();
+    }
   },
+  Resolution: {
+    goals: resolution => Goals.find({
+      resolutionId: resolution._id
+    }).fetch()
+  },
+
   Mutation: {
-    createResolution(obj, { name }, context) {
-      const resolutionId = Resolutions.insert({ name });
+    createResolution(obj, { name }, { userId }) {
+      const resolutionId = Resolutions.insert({
+        name,
+        userId
+      });
       return Resolutions.findOne(resolutionId);
     }
   }

@@ -2,24 +2,30 @@ import React, { Component } from "react";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 
-const createResolution = gql`
-  mutation createResolution($name: String!) {
-    createResolution(name: $name) {
+const createGoal = gql`
+  mutation createGoal($name: String!, $resolutionId: String!) {
+    createGoal(name: $name, resolutionId: $resolutionId) {
       _id
     }
   }
 `;
 
 
-class ResolutionForm extends Component {
+class GoalForm extends Component {
   submitForm = () => {
-    this.props.createResolution({
-       variables: {
-         name: this.name.value
-       }
-    }).catch(error => {
-      console.log(error);
-    });
+    this.props
+      .createGoal({
+        variables: {
+          name: this.name.value,
+          resolutionId: this.props.resolutionId
+        }
+      })
+      .then(() => {
+        this.name.value = "";
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   handleSubmit = e  => {
@@ -36,9 +42,9 @@ class ResolutionForm extends Component {
   };
 }
 
-export default graphql(createResolution, {
-  name: "createResolution",
+export default graphql(createGoal, {
+  name: "createGoal",
   options: {
     refetchQueries: ["Resolutions"]
   }
-})(ResolutionForm);
+})(GoalForm);
